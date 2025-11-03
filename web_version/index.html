@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nu Pogodi - Ну, погоди!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nu Pogodi - Ну, погоди!</h1>
+            <div class="info-bar">
+                <div class="score-display">
+                    <span>Score: <strong id="score">0</strong></span>
+                </div>
+                <div class="lives-display">
+                    <span>Lives: </span>
+                    <div class="lives-container">
+                        <span class="life" id="life1">●</span>
+                        <span class="life" id="life2">●</span>
+                        <span class="life" id="life3">●</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
+            <div class="game-over" id="gameOver">
+                <h2>GAME OVER</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <button id="restartBtn">Play Again</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Controls</h3>
+            <div class="controls-grid">
+                <div class="control-group">
+                    <div class="control-item">
+                        <kbd>Q</kbd> or <kbd>1</kbd>
+                        <span>Top Left</span>
+                    </div>
+                    <div class="control-item">
+                        <kbd>A</kbd> or <kbd>2</kbd>
+                        <span>Bottom Left</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-item">
+                        <kbd>P</kbd> or <kbd>9</kbd>
+                        <span>Top Right</span>
+                    </div>
+                    <div class="control-item">
+                        <kbd>L</kbd> or <kbd>0</kbd>
+                        <span>Bottom Right</span>
+                    </div>
+                </div>
+            </div>
+            <p class="control-note">Press <kbd>SPACE</kbd> to restart after game over</p>
+        </div>
+
+        <footer>
+            <p>Based on the classic Soviet electronic game from the 1980s</p>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
