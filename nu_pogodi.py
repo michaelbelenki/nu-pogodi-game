@@ -47,11 +47,68 @@ class Wolf:
     
     def draw(self, surface):
         pos = self.positions[self.current_position]
-        # Draw wolf as a simple character
-        pygame.draw.circle(surface, BROWN, pos, self.size // 2)
-        # Draw basket
-        basket_rect = pygame.Rect(pos[0] - 40, pos[1] + 20, 80, 30)
-        pygame.draw.rect(surface, YELLOW, basket_rect, 3)
+        
+        # Draw wolf head
+        pygame.draw.ellipse(surface, (160, 82, 45), 
+                          (pos[0] - 25, pos[1] - 40, 50, 60))
+        
+        # Draw wolf ears
+        ear_left = [(pos[0] - 20, pos[1] - 30), 
+                    (pos[0] - 30, pos[1] - 45), 
+                    (pos[0] - 15, pos[1] - 35)]
+        pygame.draw.polygon(surface, BROWN, ear_left)
+        
+        ear_right = [(pos[0] + 20, pos[1] - 30), 
+                     (pos[0] + 30, pos[1] - 45), 
+                     (pos[0] + 15, pos[1] - 35)]
+        pygame.draw.polygon(surface, BROWN, ear_right)
+        
+        # Draw wolf snout
+        pygame.draw.ellipse(surface, (210, 180, 140), 
+                          (pos[0] - 18, pos[1] - 15, 36, 30))
+        
+        # Draw wolf nose
+        pygame.draw.ellipse(surface, BLACK, 
+                          (pos[0] - 6, pos[1] - 13, 12, 16))
+        
+        # Draw eyes
+        pygame.draw.circle(surface, WHITE, (pos[0] - 10, pos[1] - 25), 6)
+        pygame.draw.circle(surface, WHITE, (pos[0] + 10, pos[1] - 25), 6)
+        pygame.draw.circle(surface, BLACK, (pos[0] - 10, pos[1] - 25), 3)
+        pygame.draw.circle(surface, BLACK, (pos[0] + 10, pos[1] - 25), 3)
+        
+        # Draw wolf body
+        pygame.draw.ellipse(surface, (160, 82, 45), 
+                          (pos[0] - 20, pos[1] + 0, 40, 50))
+        
+        # Draw arms
+        pygame.draw.line(surface, BROWN, 
+                        (pos[0] - 15, pos[1] + 5), 
+                        (pos[0] - 40, pos[1] + 25), 5)
+        pygame.draw.line(surface, BROWN, 
+                        (pos[0] + 15, pos[1] + 5), 
+                        (pos[0] + 40, pos[1] + 25), 5)
+        
+        # Draw basket (wicker style)
+        basket_points = [
+            (pos[0] - 30, pos[1] + 35),
+            (pos[0] - 35, pos[1] + 60),
+            (pos[0] + 35, pos[1] + 60),
+            (pos[0] + 30, pos[1] + 35)
+        ]
+        pygame.draw.polygon(surface, (210, 105, 30), basket_points)
+        pygame.draw.polygon(surface, BROWN, basket_points, 2)
+        
+        # Basket weave pattern
+        for i in range(-30, 31, 8):
+            pygame.draw.line(surface, (160, 82, 45), 
+                           (pos[0] + i, pos[1] + 35), 
+                           (pos[0] + i, pos[1] + 60), 2)
+        
+        # Basket rim
+        pygame.draw.line(surface, (101, 67, 33), 
+                        (pos[0] - 30, pos[1] + 35), 
+                        (pos[0] + 30, pos[1] + 35), 3)
 
 class Egg:
     def __init__(self, lane):
@@ -84,12 +141,27 @@ class Egg:
     
     def draw(self, surface):
         if not self.caught and not self.broken:
+            # Draw egg shadow
+            shadow_rect = pygame.Rect(self.x - self.size // 2 + 2, 
+                                     self.y - self.size + 2, 
+                                     self.size, int(self.size * 1.5))
+            shadow_surf = pygame.Surface((self.size + 4, int(self.size * 1.5) + 4), pygame.SRCALPHA)
+            pygame.draw.ellipse(shadow_surf, (0, 0, 0, 50), 
+                              (2, 2, self.size, int(self.size * 1.5)))
+            surface.blit(shadow_surf, (self.x - self.size // 2, self.y - self.size))
+            
+            # Draw egg body
             pygame.draw.ellipse(surface, WHITE, (self.x - self.size // 2, 
                                                   self.y - self.size, 
-                                                  self.size, self.size * 1.5))
+                                                  self.size, int(self.size * 1.5)))
             pygame.draw.ellipse(surface, BLACK, (self.x - self.size // 2, 
                                                   self.y - self.size, 
-                                                  self.size, self.size * 1.5), 2)
+                                                  self.size, int(self.size * 1.5)), 2)
+            
+            # Draw egg highlight (shine effect)
+            highlight_surf = pygame.Surface((8, 12), pygame.SRCALPHA)
+            pygame.draw.ellipse(highlight_surf, (255, 255, 255, 150), (0, 0, 8, 12))
+            surface.blit(highlight_surf, (self.x - 7, self.y - self.size - 5))
 
 class Game:
     def __init__(self):
@@ -145,17 +217,36 @@ class Game:
             self.eggs.remove(egg)
     
     def draw(self, surface):
-        surface.fill(GRAY)
+        # Draw gradient background
+        for y in range(HEIGHT):
+            color_val = int(232 - (y / HEIGHT) * 40)  # Gradient from light to darker gray
+            pygame.draw.line(surface, (color_val, color_val, color_val), (0, y), (WIDTH, y))
         
-        # Draw chutes
-        for lane_name, (sx, sy, ex, ey) in self.eggs[0].lanes.items() if self.eggs else []:
-            pass
+        # Draw decorative border
+        pygame.draw.rect(surface, (102, 102, 102), (5, 5, WIDTH - 10, HEIGHT - 10), 5)
         
-        # Draw simple chutes
-        pygame.draw.line(surface, BLACK, (100, 50), (150, 200), 3)
-        pygame.draw.line(surface, BLACK, (100, 50), (150, 400), 3)
-        pygame.draw.line(surface, BLACK, (700, 50), (650, 200), 3)
-        pygame.draw.line(surface, BLACK, (700, 50), (650, 400), 3)
+        # Draw henhouses at the top
+        # Left henhouse
+        pygame.draw.rect(surface, BROWN, (70, 20, 60, 40))
+        pygame.draw.rect(surface, (101, 67, 33), (70, 20, 60, 40), 2)
+        # Left roof
+        roof_left = [(65, 20), (100, 0), (135, 20)]
+        pygame.draw.polygon(surface, BROWN, roof_left)
+        pygame.draw.polygon(surface, (101, 67, 33), roof_left, 2)
+        
+        # Right henhouse
+        pygame.draw.rect(surface, BROWN, (670, 20, 60, 40))
+        pygame.draw.rect(surface, (101, 67, 33), (670, 20, 60, 40), 2)
+        # Right roof
+        roof_right = [(665, 20), (700, 0), (735, 20)]
+        pygame.draw.polygon(surface, BROWN, roof_right)
+        pygame.draw.polygon(surface, (101, 67, 33), roof_right, 2)
+        
+        # Draw chutes with improved style
+        pygame.draw.line(surface, (85, 85, 85), (100, 60), (150, 200), 4)
+        pygame.draw.line(surface, (85, 85, 85), (100, 60), (150, 400), 4)
+        pygame.draw.line(surface, (85, 85, 85), (700, 60), (650, 200), 4)
+        pygame.draw.line(surface, (85, 85, 85), (700, 60), (650, 400), 4)
         
         # Draw eggs
         for egg in self.eggs:
