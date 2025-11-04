@@ -47,24 +47,115 @@ class Wolf {
     draw() {
         const pos = this.positions[this.currentPosition];
         
-        // Draw wolf body
-        ctx.fillStyle = COLORS.brown;
+        // Draw wolf head
+        ctx.fillStyle = '#A0522D'; // Sienna brown
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, this.size / 2, 0, Math.PI * 2);
+        ctx.ellipse(pos.x, pos.y - 10, 25, 30, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw wolf ears
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.moveTo(pos.x - 20, pos.y - 30);
+        ctx.lineTo(pos.x - 30, pos.y - 45);
+        ctx.lineTo(pos.x - 15, pos.y - 35);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(pos.x + 20, pos.y - 30);
+        ctx.lineTo(pos.x + 30, pos.y - 45);
+        ctx.lineTo(pos.x + 15, pos.y - 35);
+        ctx.fill();
+        
+        // Draw wolf snout
+        ctx.fillStyle = '#D2B48C'; // Tan
+        ctx.beginPath();
+        ctx.ellipse(pos.x, pos.y, 18, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw wolf nose
+        ctx.fillStyle = COLORS.black;
+        ctx.beginPath();
+        ctx.ellipse(pos.x, pos.y - 3, 6, 8, 0, 0, Math.PI * 2);
         ctx.fill();
         
         // Draw eyes
-        ctx.fillStyle = COLORS.black;
+        ctx.fillStyle = COLORS.white;
         ctx.beginPath();
-        ctx.arc(pos.x - 10, pos.y - 5, 3, 0, Math.PI * 2);
-        ctx.arc(pos.x + 10, pos.y - 5, 3, 0, Math.PI * 2);
+        ctx.arc(pos.x - 10, pos.y - 15, 6, 0, Math.PI * 2);
+        ctx.arc(pos.x + 10, pos.y - 15, 6, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw basket
-        ctx.strokeStyle = COLORS.yellow;
+        // Draw pupils
+        ctx.fillStyle = COLORS.black;
+        ctx.beginPath();
+        ctx.arc(pos.x - 10, pos.y - 15, 3, 0, Math.PI * 2);
+        ctx.arc(pos.x + 10, pos.y - 15, 3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw wolf body
+        ctx.fillStyle = '#A0522D';
+        ctx.beginPath();
+        ctx.ellipse(pos.x, pos.y + 25, 20, 25, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw arms holding basket
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        
+        // Left arm
+        ctx.beginPath();
+        ctx.moveTo(pos.x - 15, pos.y + 15);
+        ctx.lineTo(pos.x - 40, pos.y + 35);
+        ctx.stroke();
+        
+        // Right arm
+        ctx.beginPath();
+        ctx.moveTo(pos.x + 15, pos.y + 15);
+        ctx.lineTo(pos.x + 40, pos.y + 35);
+        ctx.stroke();
+        
+        // Draw basket (wicker style)
+        const basketX = pos.x;
+        const basketY = pos.y + 45;
+        const basketWidth = 70;
+        const basketHeight = 35;
+        
+        // Basket body
+        ctx.fillStyle = '#D2691E'; // Chocolate
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(basketX - basketWidth/2 + 5, basketY - basketHeight/2);
+        ctx.lineTo(basketX - basketWidth/2, basketY + basketHeight/2);
+        ctx.lineTo(basketX + basketWidth/2, basketY + basketHeight/2);
+        ctx.lineTo(basketX + basketWidth/2 - 5, basketY - basketHeight/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Basket weave pattern
+        ctx.strokeStyle = '#A0522D';
+        ctx.lineWidth = 1.5;
+        for (let i = -30; i <= 30; i += 8) {
+            ctx.beginPath();
+            ctx.moveTo(basketX + i, basketY - basketHeight/2);
+            ctx.lineTo(basketX + i, basketY + basketHeight/2);
+            ctx.stroke();
+        }
+        
+        // Basket rim
+        ctx.strokeStyle = '#654321';
         ctx.lineWidth = 3;
-        ctx.strokeRect(pos.x - 40, pos.y + 20, 80, 30);
+        ctx.beginPath();
+        ctx.moveTo(basketX - basketWidth/2 + 5, basketY - basketHeight/2);
+        ctx.lineTo(basketX + basketWidth/2 - 5, basketY - basketHeight/2);
+        ctx.stroke();
+        
         ctx.lineWidth = 1;
+        ctx.lineCap = 'butt';
     }
 }
 
@@ -110,7 +201,13 @@ class Egg {
 
     draw() {
         if (!this.caught && !this.broken) {
-            // Draw egg
+            // Draw egg shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(this.x + 2, this.y + 2, this.size / 2, this.size * 0.75, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw egg body
             ctx.fillStyle = COLORS.white;
             ctx.strokeStyle = COLORS.black;
             ctx.lineWidth = 2;
@@ -119,6 +216,13 @@ class Egg {
             ctx.ellipse(this.x, this.y, this.size / 2, this.size * 0.75, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
+            
+            // Draw egg highlight (shine effect)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(this.x - 3, this.y - 5, 4, 6, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
             ctx.lineWidth = 1;
         }
     }
@@ -200,31 +304,76 @@ class Game {
     }
 
     draw() {
-        // Clear canvas
-        ctx.fillStyle = COLORS.gray;
+        // Clear canvas with gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 0, HEIGHT);
+        gradient.addColorStop(0, '#E8E8E8');
+        gradient.addColorStop(1, '#B8B8B8');
+        ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Draw chutes
-        ctx.strokeStyle = COLORS.black;
-        ctx.lineWidth = 3;
+        // Draw decorative border
+        ctx.strokeStyle = '#666666';
+        ctx.lineWidth = 5;
+        ctx.strokeRect(5, 5, WIDTH - 10, HEIGHT - 10);
+        
+        // Draw chute tops (henhouse)
+        ctx.fillStyle = '#8B4513';
+        ctx.strokeStyle = '#654321';
+        ctx.lineWidth = 2;
+        
+        // Left henhouse
+        ctx.fillRect(70, 20, 60, 40);
+        ctx.strokeRect(70, 20, 60, 40);
+        // Roof
         ctx.beginPath();
-        ctx.moveTo(100, 50);
+        ctx.moveTo(65, 20);
+        ctx.lineTo(100, 0);
+        ctx.lineTo(135, 20);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Right henhouse
+        ctx.fillRect(670, 20, 60, 40);
+        ctx.strokeRect(670, 20, 60, 40);
+        // Roof
+        ctx.beginPath();
+        ctx.moveTo(665, 20);
+        ctx.lineTo(700, 0);
+        ctx.lineTo(735, 20);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw chutes (improved style)
+        ctx.strokeStyle = '#555555';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        
+        // Left chutes
+        ctx.beginPath();
+        ctx.moveTo(100, 60);
         ctx.lineTo(150, 200);
-        ctx.moveTo(100, 50);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(100, 60);
         ctx.lineTo(150, 400);
-        ctx.moveTo(700, 50);
+        ctx.stroke();
+        
+        // Right chutes
+        ctx.beginPath();
+        ctx.moveTo(700, 60);
         ctx.lineTo(650, 200);
-        ctx.moveTo(700, 50);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(700, 60);
         ctx.lineTo(650, 400);
         ctx.stroke();
+        
         ctx.lineWidth = 1;
-
-        // Draw chute tops (egg sources)
-        ctx.fillStyle = COLORS.black;
-        ctx.beginPath();
-        ctx.arc(100, 50, 15, 0, Math.PI * 2);
-        ctx.arc(700, 50, 15, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.lineCap = 'butt';
 
         // Draw eggs
         for (const egg of this.eggs) {
